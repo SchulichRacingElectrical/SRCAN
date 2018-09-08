@@ -4,13 +4,11 @@
 const int SPI_CS_PIN = 10;
 unsigned int received = 0;
 
-MCP_CAN CAN(SPI_CS_PIN);
-
-bool alternate = true;                                  //to alternate between sending one set of names or another
+MCP_CAN CAN(SPI_CS_PIN);                                
 
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(1000000);
   while (CAN_OK != CAN.begin(CAN_250KBPS))              // init can bus : baudrate = 500k
   {
     Serial.println("CAN BUS Shield init fail");
@@ -30,13 +28,18 @@ void loop() {
     values[i] = random(0,200);                                   // can change to change range of numbers for the values
   }
   
-  String masterstring = "";
+  String masterstring = "{";
   
   for (int i = 0; i < 4 ; i++) {
-    masterstring += names[i] + ":";
-    masterstring += String(values[i]) + ",";
+    masterstring = masterstring + names[i] + ":";
+    masterstring += String(values[i]);  
+    if (i != 3){
+    masterstring += ",";
+    }
   }
   
-  Serial.print(masterstring + "\n");
+  Serial.print(masterstring + "}");
+
+  delay(4);
 
 }
