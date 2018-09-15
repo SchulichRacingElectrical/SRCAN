@@ -21,7 +21,6 @@ void setup()
     
 }
 
-unsigned int canindex = 0x0;
 void loop()
 {
     unsigned char stmp[] = { random(0,9),random(0,9)};
