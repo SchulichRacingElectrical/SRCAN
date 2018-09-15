@@ -24,8 +24,9 @@ void setup()
 unsigned int canindex = 0x0;
 void loop()
 {
-  unsigned char stmp[] = { random(0,9),random(0,9)};
+    unsigned char stmp[] = { random(0,9),random(0,9)};
     CAN.sendMsgBuf(0x70, 0, 2, stmp);
+    Serial.println(stmp[0]);
 }
 
 /*********************************************************************************************************
