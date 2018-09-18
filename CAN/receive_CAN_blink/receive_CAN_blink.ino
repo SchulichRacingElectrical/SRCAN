@@ -13,7 +13,7 @@ void setup()
 {
   Serial.begin(115200);
   delay(0);
-  while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
+  while (CAN_OK != CAN.begin(CAN_1000KBPS))              // init can bus : baudrate = 500k
   {
     Serial.println("CAN BUS Shield init fail");
     Serial.println(" Init CAN BUS Shield again");
@@ -42,7 +42,7 @@ void loop()
 
     for (int i = 0; i < len; i++) // print the data
     {
-      if ( buf[i] != '\0') {
+      if (1) {
         Serial.print(buf[i]);
         Serial.print("\t");
       }
