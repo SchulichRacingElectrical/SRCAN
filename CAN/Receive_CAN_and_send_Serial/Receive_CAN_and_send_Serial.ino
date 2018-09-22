@@ -17,7 +17,7 @@ int CombineBytes (int high, int low) {
 void setup() {
   Serial.begin(1000000);
 
-  while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
+  while (CAN_OK != CAN.begin(CAN_1000KBPS))              // init can bus : baudrate = 500k
   {
     Serial.println("CAN BUS Shield init fail");
     Serial.println(" Init CAN BUS Shield again");
@@ -37,8 +37,9 @@ void loop() {
   if (CAN_MSGAVAIL == CAN.checkReceive())           // check if data coming
   {
     CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
-    int rpm = CombineBytes(buf[0],buf[1]);
-    masterstring = "{rpm:" + (String)rpm + "}";
+    int receivednumber = CombineBytes(buf[0],buf[1]);
+    masterstring = "{rpm:" + (String)receivednumber +",test:" +(String)receivednumber + "}\0";
     Serial.print(masterstring);
   }
+  delay(10);                 
 }
