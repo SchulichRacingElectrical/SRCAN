@@ -11,7 +11,7 @@ void setup()
 {
     Serial.begin(115200);
 
-    while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
+    while (CAN_OK != CAN.begin(CAN_1000KBPS))              // init can bus : baudrate = 500k
     {
         Serial.println("CAN BUS Shield init fail");
         Serial.println(" Init CAN BUS Shield again");
@@ -21,10 +21,14 @@ void setup()
     
 }
 
+unsigned int canindex = 0x0;
 void loop()
 {
-  unsigned char stmp[] = { random(0,9),random(0,9)};
+    unsigned char stmp[] = { random(0,9),random(0,9)};
     CAN.sendMsgBuf(0x70, 0, 2, stmp);
+    Serial.print(stmp[0]);
+    Serial.print(", ");
+    Serial.println(stmp[1]);
 }
 
 /*********************************************************************************************************
