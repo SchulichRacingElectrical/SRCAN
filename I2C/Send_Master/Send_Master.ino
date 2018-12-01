@@ -20,7 +20,9 @@ byte x = 0;
 
 void loop() {
   Wire.beginTransmission(8); // transmit to device #8
-  Wire.write("X is a number");        // sends five bytes
+  int x = 17;
+  String masterstring = "X is always" +String(x);
+  Wire.write(masterstring.c_str());        // sends five bytes
   Wire.endTransmission();    // stop transmitting
 
   delay(500);
