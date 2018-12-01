@@ -1,5 +1,6 @@
 #include <mcp_can.h>
 #include <SPI.h>
+#include <Wire.h>
 
 const int SPI_CS_PIN = 10;
 unsigned int received = 0;
@@ -17,7 +18,10 @@ void GroupAndSend( String names[], int values[], int sizeofValues)
     }
   }
   masterstring += "}";
-  Serial.print(masterstring);
+  
+  Wire.beginTransmission(8);
+  Wire.write(masterstring);
+  Wire.endTransmission(); 
 }
 
 
@@ -33,14 +37,15 @@ void fillValueArray (unsigned char buf[], int values[], int numberofValues) {
   for (int i = 0, j = 0; i < numberofValues; i++, j += 2) {
     values[i] = CombineBytes(buf[j + 1], buf[j]);
   }
-  Serial.println();
+  //Serial.println();                               idk why this line is here
 }
 
 
 void setup() {
 
   Serial.begin(115200);
-
+  Wire.begin();
+  
   while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
   {
     Serial.println("CAN BUS Shield init fail");
@@ -131,6 +136,8 @@ void loop() {
 
       int values[2];
       fillValueArray(buf, values, 2);
+
+      GroupAndSend(names,values,2);
 
     }
   }
