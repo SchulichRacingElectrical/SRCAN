@@ -92,120 +92,117 @@ void setup() {
 void loop() {
   unsigned char len = 0;
   unsigned char buf[8];
-//   if (CAN_MSGAVAIL == CAN.checkReceive()) {
-//    //unsigned long canId = CAN.getCanId();
-//    Serial.println(CAN.getCanId());
-//    int canId = 0;
-//    if(canId == 0x0CFFF048){
-//      CAN.readMsgBuf(&len, buf); 
-//      int value[1];
-//      fillValueArray(buf, value, 1);
-//      rpm = value[0];
-//      //Serial.println(rpm);
-//    }
-//    LED(rpm);
-//    
-//    //Code for the display
-//    //Wire.beginTransmission(8);
-//    //Wire.write(data);
-//    //Wire.endTransmission(); 
-//  }
+  if (CAN_MSGAVAIL == CAN.checkReceive()) {
+    CAN.readMsgBuf(&len, buf); 
+    unsigned long canId = CAN.getCanId();
+    if(canId == 0x0CFFF048){   
+      int value[1];
+      fillValueArray(buf, value, 1);
+      rpm = value[0];
+      Serial.println(rpm);
+    }
+    LED(rpm);
+    
+    //Code for the display
+    //Wire.beginTransmission(8);
+    //Wire.write(data);
+    //Wire.endTransmission(); 
+  }
   //0x0CFF_F048 first two bytes are RPM
   
-
-  if (CAN_MSGAVAIL == CAN.checkReceive()) {
-
-    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
-    
-
-    unsigned long canId = CAN.getCanId();
-
-    Serial.println("-----------------------------");
-    Serial.print("Get data from ID: ");
-    Serial.println(canId, HEX);
-    String names[] = {"rpm", "tps", "ftime", "igangl"};
-
-    int values[4];
-    fillValueArray(buf, values, 4);
-    GroupAndSend (names, values, 4);
-    //fillValueArray(buf+4,values,4);
-    Serial.println();
-
-    if (canId == 0x0CFFF048) {
-
-      String names[] = {"rpm", "tps", "ftime", "igangl"}; //"rpm", "tps", " fueltime", "ignitionangle"
-
-      int values[4];
-      fillValueArray(buf, values, 2);
-      GroupAndSend (names, values, 2);
-      fillValueArray(buf+4,values,2);
-      GroupAndSend(names+2,values,2);
-    }
-
-    if (canId == 0xCFFF148) {
-
-      String names[] = {"baro", "map", "lambda"};
-
-      int values[3];
-      fillValueArray(buf, values, 3);
-
-      GroupAndSend(names, values, 3);
-    }
-
-    if (canId == 0xCFFF248) {
-
-      String names[] = {"a1", "a2", "a3", "a4"}; //analog 1-4
-
-      int values[4];
-      fillValueArray(buf, values, 2);
-      GroupAndSend(names, values, 2);
-      fillValueArray(buf+4,values,2);
-      GroupAndSend(names+2,values,2);
-    }
-
-    if (canId == 0xCFFF348 ) {
-
-      String names[] = {"a5", "a6", "a7", "a8"}; //analog 5-8
-
-      int values[4];
-      fillValueArray(buf, values, 2);
-      GroupAndSend(names, values, 2);
-      fillValueArray(buf+4,values,2);
-      GroupAndSend(names+2,values,2);
-
-    }
-
-    if (canId == 0xCFFF448 ) {
-
-      String names[] = {"f1", "f2", "f3", "f4"};  //frequency 1-4
-
-      int values[4];
-      fillValueArray(buf, values, 2);
-      GroupAndSend(names, values, 2);
-      fillValueArray(buf+4,values,2);
-      GroupAndSend(names+2,values,2);
-      
-
-    }
-
-    if (canId == 0xCFFF548 ) {
-
-      String names[] = {"bat", "atmp", "ctmp"}; //"battery", "airtemp", "coolanttemp"
-
-      int values[3];
-      fillValueArray(buf, values, 3);
-
-      GroupAndSend (names, values, 3);
-    }
-
-    if (canId == 0xCFFF648 ) {
-      String names[] = {"t1", "t2"}; //thermistor 1-2
-
-      int values[2];
-      fillValueArray(buf, values, 2);
-
-      GroupAndSend(names,values,2);
-
-    }
-  }
+//  if (CAN_MSGAVAIL == CAN.checkReceive()) {
+//
+//    CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
+//    
+//
+//    unsigned long canId = CAN.getCanId();
+//
+//    Serial.println("-----------------------------");
+//    Serial.print("Get data from ID: ");
+//    Serial.println(canId, HEX);
+//    String names[] = {"rpm", "tps", "ftime", "igangl"};
+//
+//    int values[4];
+//    fillValueArray(buf, values, 4);
+//    GroupAndSend (names, values, 4);
+//    //fillValueArray(buf+4,values,4);
+//    Serial.println();
+//
+//    if (canId == 0x0CFFF048) {
+//
+//      String names[] = {"rpm", "tps", "ftime", "igangl"}; //"rpm", "tps", " fueltime", "ignitionangle"
+//
+//      int values[4];
+//      fillValueArray(buf, values, 2);
+//      GroupAndSend (names, values, 2);
+//      fillValueArray(buf+4,values,2);
+//      GroupAndSend(names+2,values,2);
+//    }
+//
+//    if (canId == 0xCFFF148) {
+//
+//      String names[] = {"baro", "map", "lambda"};
+//
+//      int values[3];
+//      fillValueArray(buf, values, 3);
+//
+//      GroupAndSend(names, values, 3);
+//    }
+//
+//    if (canId == 0xCFFF248) {
+//
+//      String names[] = {"a1", "a2", "a3", "a4"}; //analog 1-4
+//
+//      int values[4];
+//      fillValueArray(buf, values, 2);
+//      GroupAndSend(names, values, 2);
+//      fillValueArray(buf+4,values,2);
+//      GroupAndSend(names+2,values,2);
+//    }
+//
+//    if (canId == 0xCFFF348 ) {
+//
+//      String names[] = {"a5", "a6", "a7", "a8"}; //analog 5-8
+//
+//      int values[4];
+//      fillValueArray(buf, values, 2);
+//      GroupAndSend(names, values, 2);
+//      fillValueArray(buf+4,values,2);
+//      GroupAndSend(names+2,values,2);
+//
+//    }
+//
+//    if (canId == 0xCFFF448 ) {
+//
+//      String names[] = {"f1", "f2", "f3", "f4"};  //frequency 1-4
+//
+//      int values[4];
+//      fillValueArray(buf, values, 2);
+//      GroupAndSend(names, values, 2);
+//      fillValueArray(buf+4,values,2);
+//      GroupAndSend(names+2,values,2);
+//      
+//
+//    }
+//
+//    if (canId == 0xCFFF548 ) {
+//
+//      String names[] = {"bat", "atmp", "ctmp"}; //"battery", "airtemp", "coolanttemp"
+//
+//      int values[3];
+//      fillValueArray(buf, values, 3);
+//
+//      GroupAndSend (names, values, 3);
+//    }
+//
+//    if (canId == 0xCFFF648 ) {
+//      String names[] = {"t1", "t2"}; //thermistor 1-2
+//
+//      int values[2];
+//      fillValueArray(buf, values, 2);
+//
+//      GroupAndSend(names,values,2);
+//
+//    }
+//  }
 }
