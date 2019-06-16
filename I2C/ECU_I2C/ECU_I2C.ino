@@ -6,30 +6,36 @@
 #define DRIVERWANTSBLOCK 1
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(16, PIN, NEO_GRBW + NEO_KHZ800); 
 
+//GLOBALS
 const int SPI_CS_PIN = 10;
 unsigned int received = 0;
+int rpm = 1;
+int engineTemp = 1;
+int flag = 10;
+bool engineTooHot = false;
+//GLOBALS
 
 MCP_CAN CAN(SPI_CS_PIN);
 
-void GroupAndSend( String names[], int values[], int sizeofValues)
-{
-  String masterstring = "{";
-  for (int i = 0; i < sizeofValues ; i++) {
-    masterstring += names[i] + ":";
-    masterstring += String(values[i]);
-    if ( i != sizeofValues - 1) {
-      masterstring += ",";
-    }
-  }
-  masterstring += "}";
-  const char* masterstringc = masterstring.c_str();
-
-  Serial.println(masterstringc);
-  
-  //Wire.beginTransmission(8);
-  //Wire.write(masterstringc);
-  //Wire.endTransmission(); 
-}
+//void GroupAndSend( String names[], int values[], int sizeofValues)
+//{
+//  String masterstring = "{";
+//  for (int i = 0; i < sizeofValues ; i++) {
+//    masterstring += names[i] + ":";
+//    masterstring += String(values[i]);
+//    if ( i != sizeofValues - 1) {
+//      masterstring += ",";
+//    }
+//  }
+//  masterstring += "}";
+//  const char* masterstringc = masterstring.c_str();
+//
+//  Serial.println(masterstringc);
+//  
+//  //Wire.beginTransmission(8);
+//  //Wire.write(masterstringc);
+//  //Wire.endTransmission(); 
+//}
 
 
 int CombineBytes (int high, int low) {
@@ -44,11 +50,7 @@ void fillValueArray (unsigned char buf[], int values[], int numberofValues) {
   for (int i = 0, j = 0; i < numberofValues; i++, j += 2) {
     values[i] = CombineBytes(buf[j + 1], buf[j]);
   }
-  //Serial.println();                               idk why this line is here
 }
-
-int rpm = 0;
-int flag = 10;
 
 //LED CODE
 void blockIncrementLED() { //Just for making the blue appear as a block
@@ -57,7 +59,7 @@ void blockIncrementLED() { //Just for making the blue appear as a block
 }
 
 void LED (int rpm) {//Actually determines the number of LEDS on based on the RPM value
-  int numberoflights = ((int)(rpm - 10000) * 0.0064);        
+  int numberoflights = ((int)(rpm - 10800) * 0.0064);        
   if (numberoflights > strip.numPixels()) 
     numberoflights = 0;
   for (int i = 0; i < strip.numPixels(); i++) {
@@ -76,6 +78,19 @@ void LED (int rpm) {//Actually determines the number of LEDS on based on the RPM
     }
     strip.show();
     flag = true;
+}
+
+void flashWarning(){
+  delay(100);
+  for (int i = 0; i < strip.numPixels(); i++) {
+     strip.setPixelColor(i, 255, 0, 0);
+  }
+  strip.show();
+  delay(100);
+  for (int i = 0; i < strip.numPixels(); i++) {
+     strip.setPixelColor(i, 0);
+  }
+  strip.show();
 }
 //LED CODE
 
@@ -99,15 +114,25 @@ void loop() {
       int value[1];
       fillValueArray(buf, value, 1);
       rpm = value[0];
-      Serial.println(rpm);
+      flag = (rpm >= 10000)?1:0;
     }
+    if (canId == 0xCFFF548) {
+      int values[3];
+      fillValueArray(buf, values, 3);
+      engineTemp = (int)(values[2]/10);
+      if(engineTemp > 110) //Proper threshold is 110.
+        engineTooHot = true;
+    }
+  }
+  if(!engineTooHot)
     LED(rpm);
-    
+  else
+    flashWarning();
     //Code for the display
     //Wire.beginTransmission(8);
     //Wire.write(data);
     //Wire.endTransmission(); 
-  }
+}
   //0x0CFF_F048 first two bytes are RPM
   
 //  if (CAN_MSGAVAIL == CAN.checkReceive()) {
@@ -205,4 +230,4 @@ void loop() {
 //
 //    }
 //  }
-}
+//}
